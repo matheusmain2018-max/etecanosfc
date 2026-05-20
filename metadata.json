@@ -1,0 +1,6 @@
+{
+  "name": "ETECANOS FC - Contratos",
+  "description": "Sistema de assinatura eletrônica de contratos para os jogadores do ETECANOS FC com geração de PDFs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
