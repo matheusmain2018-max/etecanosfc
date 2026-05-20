@@ -10,11 +10,30 @@ export function formatCurrency(value: number): string {
 
 export function formatDateBr(dateString: string): string {
   if (!dateString) return '';
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  
+  // Format YYYY-MM-DD securely without timezone shifts
+  if (dateString.includes('-')) {
+    const parts = dateString.split('T')[0].split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const month = parts[1].padStart(2, '0');
+      const day = parts[2].padStart(2, '0');
+      return `${day}/${month}/${year}`;
+    }
+  }
+
+  // Fallback for general strings and safety
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    // Use UTC methods to prevent timezone shifting
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+  } catch (e) {
+    return dateString;
+  }
 }
 
 // Asynchronous helper to load image safely with CORS and timeout

@@ -328,17 +328,27 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Posição Principal</label>
-                <select
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Posição do Atleta</label>
+                <input
                   id="form-position"
+                  type="text"
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-2.5 text-sm font-bold focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all text-slate-700 cursor-pointer"
-                >
+                  list="positions-list"
+                  placeholder="Ex: Volante e Atacante, outros..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm font-bold focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all text-slate-800"
+                />
+                <datalist id="positions-list">
                   {fieldPositions.map((pos) => (
                     <option key={pos} value={pos}>{pos}</option>
                   ))}
-                </select>
+                  <option value="Atacante e Volante">Atacante e Volante</option>
+                  <option value="Volante / Meio-Campo">Volante / Meio-Campo</option>
+                  <option value="Zagueiro / Lateral">Zagueiro / Lateral</option>
+                  <option value="Ponta / Meio-Campo">Ponta / Meio-Campo</option>
+                  <option value="Outros">Outros</option>
+                </datalist>
+                <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">Dica: Selecione da lista ou escreva o que desejar.</span>
               </div>
             </div>
 
