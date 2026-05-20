@@ -40,6 +40,18 @@ const INITIAL_CONTRACTS: Contract[] = [
   }
 ];
 
+const SYSTEM_SETUP_ID = 'contract-system-setup';
+const SYSTEM_SETUP_CONTRACT: Contract = {
+  id: SYSTEM_SETUP_ID,
+  playerName: 'SYSTEM_SETUP_MARKER',
+  position: 'Volante',
+  salary: 1,
+  durationMonths: 1,
+  startDate: '2026-05-20',
+  code: 'SYSTEM-SETUP',
+  status: 'PENDING'
+};
+
 export default function App() {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [activeTab, setActiveTab] = useState<ActiveTab>('player');
@@ -56,8 +68,9 @@ export default function App() {
       });
       
       if (loaded.length === 0) {
-        // If Firestore is empty, initialize it with standard beautiful defaults
+        // If Firestore is empty, initialize it with persistent system marker and standard defaults
         try {
+          await setDoc(doc(db, 'contracts', SYSTEM_SETUP_ID), SYSTEM_SETUP_CONTRACT);
           for (const contract of INITIAL_CONTRACTS) {
             await setDoc(doc(db, 'contracts', contract.id), contract);
           }
@@ -65,9 +78,21 @@ export default function App() {
           console.error('Falha ao inicializar base do Firestore:', e);
         }
       } else {
+        // Proactively insert the system setup marker if it is missing from legacy databases
+        const hasMarker = loaded.some(c => c.id === SYSTEM_SETUP_ID);
+        if (!hasMarker) {
+          try {
+            await setDoc(doc(db, 'contracts', SYSTEM_SETUP_ID), SYSTEM_SETUP_CONTRACT);
+          } catch (e) {
+            console.error('Falha ao criar marcador de inicializacao no Firestore:', e);
+          }
+        }
+
+        // Filter out the system marker so it never shows up in the UI
+        const visible = loaded.filter(c => c.id !== SYSTEM_SETUP_ID);
         // Sort contracts (newest first based on creation date id index)
-        loaded.sort((a, b) => b.id.localeCompare(a.id));
-        setContracts(loaded);
+        visible.sort((a, b) => b.id.localeCompare(a.id));
+        setContracts(visible);
         setIsReady(true);
       }
     }, (error) => {
@@ -97,8 +122,13 @@ export default function App() {
       status: 'PENDING'
     };
 
+    // Clean keys with undefined values to prevent Firestore from throwing "Unsupported field value: [object Object]" or similar crashes
+    const cleanedContract = Object.fromEntries(
+      Object.entries(newContract).filter(([_, v]) => v !== undefined)
+    ) as Contract;
+
     try {
-      await setDoc(doc(db, 'contracts', id), newContract);
+      await setDoc(doc(db, 'contracts', id), cleanedContract);
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `contracts/${id}`);
     }
@@ -120,12 +150,18 @@ export default function App() {
     extraData?: { birthDate?: string; photoDataUrl?: string; bidNumber?: string; bidProtocol?: string }
   ) => {
     try {
-      await updateDoc(doc(db, 'contracts', id), {
+      const updateData: any = {
         status: 'SIGNED',
         signatureDataUrl,
         signedAt: new Date().toISOString(),
-        ...extraData
-      });
+      };
+      if (extraData) {
+        if (extraData.birthDate !== undefined) updateData.birthDate = extraData.birthDate;
+        if (extraData.photoDataUrl !== undefined) updateData.photoDataUrl = extraData.photoDataUrl;
+        if (extraData.bidNumber !== undefined) updateData.bidNumber = extraData.bidNumber;
+        if (extraData.bidProtocol !== undefined) updateData.bidProtocol = extraData.bidProtocol;
+      }
+      await updateDoc(doc(db, 'contracts', id), updateData);
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `contracts/${id}`);
     }
