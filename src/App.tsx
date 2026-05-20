@@ -7,8 +7,10 @@ import { Contract, ActiveTab } from './types';
 import TeamLogo from './components/TeamLogo';
 import PlayerView from './components/PlayerView';
 import AdminPanel from './components/AdminPanel';
+import { db, handleFirestoreError, OperationType } from './firebase';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 
-// Simulated initial templates to populate empty local storage
+// Simulated initial templates to populate empty Firestore database
 const INITIAL_CONTRACTS: Contract[] = [
   {
     id: 'contract-demo-1',
@@ -43,31 +45,40 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('player');
   const [isReady, setIsReady] = useState(false);
 
-  // Load contracts from LocalStorage initially
+  // Load contracts from Firestore in real-time
   useEffect(() => {
-    const saved = localStorage.getItem('etecanos_contracts');
-    if (saved) {
-      try {
-        setContracts(JSON.parse(saved));
-      } catch (e) {
-        console.error('Falha ao restaurar dados do localStorage. Usando padrões.', e);
-        setContracts(INITIAL_CONTRACTS);
+    const contractsQuery = collection(db, 'contracts');
+    
+    const unsubscribe = onSnapshot(contractsQuery, async (snapshot) => {
+      const loaded: Contract[] = [];
+      snapshot.forEach((docSnap) => {
+        loaded.push(docSnap.data() as Contract);
+      });
+      
+      if (loaded.length === 0) {
+        // If Firestore is empty, initialize it with standard beautiful defaults
+        try {
+          for (const contract of INITIAL_CONTRACTS) {
+            await setDoc(doc(db, 'contracts', contract.id), contract);
+          }
+        } catch (e) {
+          console.error('Falha ao inicializar base do Firestore:', e);
+        }
+      } else {
+        // Sort contracts (newest first based on creation date id index)
+        loaded.sort((a, b) => b.id.localeCompare(a.id));
+        setContracts(loaded);
+        setIsReady(true);
       }
-    } else {
-      setContracts(INITIAL_CONTRACTS);
-      localStorage.setItem('etecanos_contracts', JSON.stringify(INITIAL_CONTRACTS));
-    }
-    setIsReady(true);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'contracts');
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Save contracts to LocalStorage on updates
-  const saveContracts = (updated: Contract[]) => {
-    setContracts(updated);
-    localStorage.setItem('etecanos_contracts', JSON.stringify(updated));
-  };
-
-  // Add / Generate contract handler
-  const handleAddContract = (newContractData: Omit<Contract, 'id' | 'code' | 'status'>) => {
+  // Add / Generate contract handler targeting database
+  const handleAddContract = async (newContractData: Omit<Contract, 'id' | 'code' | 'status'>) => {
     // Generate a unique code (E.g. ETEC-3819)
     let generatedCode = '';
     let isUnique = false;
@@ -78,42 +89,46 @@ export default function App() {
       isUnique = !contracts.some(c => c.code === generatedCode);
     }
 
+    const id = `contract-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const newContract: Contract = {
       ...newContractData,
-      id: `contract-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id,
       code: generatedCode,
       status: 'PENDING'
     };
 
-    const updated = [newContract, ...contracts];
-    saveContracts(updated);
+    try {
+      await setDoc(doc(db, 'contracts', id), newContract);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `contracts/${id}`);
+    }
   };
 
-  // Delete/Invalidate Contract handler
-  const handleDeleteContract = (id: string) => {
-    const updated = contracts.filter(c => c.id !== id);
-    saveContracts(updated);
+  // Delete/Invalidate Contract handler targeting database
+  const handleDeleteContract = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'contracts', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `contracts/${id}`);
+    }
   };
 
-  // Sign contract handler
-  const handleSignContract = (
+  // Sign contract handler targeting database
+  const handleSignContract = async (
     id: string, 
     signatureDataUrl: string, 
     extraData?: { birthDate?: string; photoDataUrl?: string; bidNumber?: string; bidProtocol?: string }
   ) => {
-    const updated = contracts.map(c => {
-      if (c.id === id) {
-        return {
-          ...c,
-          status: 'SIGNED' as const,
-          signatureDataUrl,
-          signedAt: new Date().toISOString(),
-          ...extraData
-        };
-      }
-      return c;
-    });
-    saveContracts(updated);
+    try {
+      await updateDoc(doc(db, 'contracts', id), {
+        status: 'SIGNED',
+        signatureDataUrl,
+        signedAt: new Date().toISOString(),
+        ...extraData
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `contracts/${id}`);
+    }
   };
 
   if (!isReady) {

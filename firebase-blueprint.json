@@ -1,0 +1,37 @@
+{
+  "entities": {
+    "Contract": {
+      "title": "Contract",
+      "description": "Athlete player contract and designation for Etecanos FC",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "playerName": { "type": "string" },
+        "position": { "type": "string" },
+        "salary": { "type": "number" },
+        "durationMonths": { "type": "number" },
+        "startDate": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "SIGNED"]
+        },
+        "signatureDataUrl": { "type": "string" },
+        "signedAt": { "type": "string" },
+        "shirtNumber": { "type": "number" },
+        "birthDate": { "type": "string" },
+        "photoDataUrl": { "type": "string" },
+        "bidNumber": { "type": "string" },
+        "bidProtocol": { "type": "string" },
+        "code": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "playerName", "position", "salary", "durationMonths", "startDate", "status", "code"]
+    }
+  },
+  "firestore": {
+    "contracts/{contractId}": {
+      "schema": "Contract",
+      "description": "Collection of all Etecanos FC athlete contracts"
+    }
+  }
+}

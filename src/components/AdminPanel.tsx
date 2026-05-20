@@ -189,12 +189,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
               </button>
             </form>
 
-            <div className="pt-4 border-t border-slate-100 text-center">
-              <span className="text-[11px] text-slate-400 leading-relaxed block">
-                Acesso de demonstração padrão do clube:<br /> 
-                <strong className="text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">admin</strong> com a senha <strong className="text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">admin123</strong>
-              </span>
-            </div>
+
           </div>
         </div>
       </div>

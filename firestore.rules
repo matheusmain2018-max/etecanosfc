@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Verify schema consistency and boundaries to prevent value poisoning
+    function isValidContract(data) {
+      return data.id is string
+        && data.playerName is string
+        && data.playerName.size() > 0
+        && data.playerName.size() <= 200
+        && data.position is string
+        && data.salary is number
+        && data.salary > 0
+        && data.durationMonths is number
+        && data.durationMonths > 0
+        && data.startDate is string
+        && data.status is string
+        && (data.status == 'PENDING' || data.status == 'SIGNED')
+        && data.code is string
+        && data.code.size() > 0;
+    }
+
+    match /contracts/{contractId} {
+      allow read: if true;
+      allow create: if isValidContract(request.resource.data);
+      allow update: if isValidContract(request.resource.data);
+      allow delete: if true;
+    }
+  }
+}
