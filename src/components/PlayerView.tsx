@@ -14,8 +14,57 @@ interface PlayerViewProps {
     id: string, 
     signatureDataUrl: string, 
     extraData?: { birthDate?: string; photoDataUrl?: string; bidNumber?: string; bidProtocol?: string }
-  ) => void;
+  ) => Promise<void>;
 }
+
+// Utility function to compress images using Canvas (making high-res mobile photos super lightweight for Firestore)
+const compressImage = (base64Str: string, maxWidth = 250, maxHeight = 300, quality = 0.75): Promise<string> => {
+  return new Promise((resolve) => {
+    if (!base64Str || !base64Str.startsWith('data:image')) {
+      resolve(base64Str);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      // Calculate scale
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(base64Str);
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+
+    img.onerror = () => {
+      resolve(base64Str);
+    };
+
+    img.src = base64Str;
+  });
+};
 
 export default function PlayerView({ contracts, onSignContract }: PlayerViewProps) {
   const [code, setCode] = useState('');
@@ -64,7 +113,7 @@ export default function PlayerView({ contracts, onSignContract }: PlayerViewProp
     setSignatureData(dataUrl);
   };
 
-  const handleFinalizeSignature = () => {
+  const handleFinalizeSignature = async () => {
     if (!activeContract) return;
     if (!signatureData) {
       alert('Por favor, trace a sua assinatura antes de confirmar.');
@@ -87,9 +136,9 @@ export default function PlayerView({ contracts, onSignContract }: PlayerViewProp
       bidProtocol
     };
 
-    // Simulate standard secure document sealing lag
-    setTimeout(() => {
-      onSignContract(activeContract.id, signatureData, extraFields);
+    try {
+      // Complete database update and wait for the request to succeed on Firestore
+      await onSignContract(activeContract.id, signatureData, extraFields);
       
       const updatedContract = {
         ...activeContract,
@@ -100,7 +149,6 @@ export default function PlayerView({ contracts, onSignContract }: PlayerViewProp
       };
       
       setActiveContract(updatedContract);
-      setIsSubmitting(false);
       setSuccessAnimation(true);
       
       // Auto-trigger PDF downloads for immediate feedback
@@ -110,7 +158,20 @@ export default function PlayerView({ contracts, onSignContract }: PlayerViewProp
       } catch (e) {
         console.error('Falha ao descarregar PDFs:', e);
       }
-    }, 1500);
+    } catch (e: any) {
+      console.error('Falha ao registrar assinatura:', e);
+      let erroText = 'Ocorreu um erro de gravação ao salvar a assinatura no banco do clube.';
+      if (e instanceof Error) {
+        if (e.message.includes('exceeds maximum limit') || e.message.includes('too large')) {
+          erroText += ' O tamanho do arquivo ou foto excede o limite. Por favor, tente enviar outra foto menor.';
+        } else {
+          erroText += ` Detalhes do erro: ${e.message}`;
+        }
+      }
+      alert(erroText);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Reset to seek other player
@@ -479,9 +540,18 @@ export default function PlayerView({ contracts, onSignContract }: PlayerViewProp
                           const file = e.target.files?.[0];
                           if (file) {
                             const reader = new FileReader();
-                            reader.onload = (event) => {
+                            reader.onload = async (event) => {
                               if (event.target?.result) {
-                                setPhotoDataUrl(event.target.result as string);
+                                const originalBase64 = event.target.result as string;
+                                try {
+                                  // Instantly auto-compress image on mobile/PC to max 250x300 width/height at 75% quality
+                                  // Crucial to prevent document size crossing 1 MiB limit in Firestore database
+                                  const compressed = await compressImage(originalBase64, 250, 300, 0.75);
+                                  setPhotoDataUrl(compressed);
+                                } catch (err) {
+                                  console.error("Erro na compressao do atleta:", err);
+                                  setPhotoDataUrl(originalBase64);
+                                }
                               }
                             };
                             reader.readAsDataURL(file);
