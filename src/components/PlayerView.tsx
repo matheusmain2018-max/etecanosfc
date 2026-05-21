@@ -667,7 +667,7 @@ export default function PlayerView({ contracts, onSignContract, initialCode }: P
                 <div className="flex justify-between items-center">
                   <span>ASSINADO EM:</span>
                   <span className="font-semibold text-slate-800">
-                    {activeContract.signedAt ? new Date(activeContract.signedAt).toLocaleDateString('pt-BR') : 'Recentemente'}
+                    {activeContract.signedAt ? formatDateBr(activeContract.signedAt) : 'Recentemente'}
                   </span>
                 </div>
                 {(activeContract.birthDate) && (

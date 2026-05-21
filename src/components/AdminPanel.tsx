@@ -19,13 +19,63 @@ function calculateAge(birthDateString?: string): number {
   if (!birthDateString) return 0;
   const today = new Date();
   const birthDate = new Date(birthDateString);
-  if (isNaN(birthDate.getTime())) return 0;
+  if (isNaN(birthDate.getTime())) {
+    // Attempt fallback splitting
+    if (birthDateString.includes('-')) {
+      const parts = birthDateString.split('T')[0].split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        let age = today.getFullYear() - year;
+        const m = today.getMonth() - month;
+        if (m < 0 || (m === 0 && today.getDate() < day)) {
+          age--;
+        }
+        return age;
+      }
+    }
+    return 0;
+  }
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
   return age;
+}
+
+// Resilient date formatting helper for UI
+function safeFormatDate(dateString?: string, format: 'short' | 'long' = 'short'): string {
+  if (!dateString) return '';
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) {
+      if (dateString.includes('-')) {
+        const parts = dateString.split('T')[0].split('-');
+        if (parts.length === 3) {
+          const day = parts[2].padStart(2, '0');
+          const month = parts[1].padStart(2, '0');
+          const year = parts[0];
+          return `${day}/${month}/${year}`;
+        }
+      }
+      return dateString;
+    }
+    if (format === 'long') {
+      return d.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+    }
+    return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+  } catch (error) {
+    console.warn('safeFormatDate error:', error);
+    if (dateString.includes('-')) {
+      const parts = dateString.split('T')[0].split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+    }
+    return dateString;
+  }
 }
 
 export default function AdminPanel({ contracts, onAddContract, onDeleteContract, onUpdateOverall }: AdminPanelProps) {
@@ -695,7 +745,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract,
                         <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
                           <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Início da Proposta:</span>
                           <span className="text-slate-800 dark:text-slate-100 font-extrabold text-xs">
-                            {new Date(contract.startDate).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
+                            {safeFormatDate(contract.startDate, 'long')}
                           </span>
                         </div>
                         <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
@@ -708,7 +758,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract,
                           <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
                             <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Idade do Atleta:</span>
                             <span className="text-slate-800 dark:text-slate-100 font-extrabold text-xs">
-                              {calculateAge(contract.birthDate)} anos ({new Date(contract.birthDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })})
+                              {calculateAge(contract.birthDate)} anos ({safeFormatDate(contract.birthDate)})
                             </span>
                           </div>
                         )}

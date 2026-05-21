@@ -59,13 +59,23 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('elenco');
   const [isReady, setIsReady] = useState(false);
   const [playerViewInitialCode, setPlayerViewInitialCode] = useState('');
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('darkMode') === 'true';
+    try {
+      return localStorage.getItem('darkMode') === 'true';
+    } catch (e) {
+      console.warn('localStorage read blocked or unavailable on this browser:', e);
+      return false;
+    }
   });
 
-  // Track and apply doc dark mode state dynamically
+  // Track and apply doc dark mode state dynamically securely
   useEffect(() => {
-    localStorage.setItem('darkMode', darkMode.toString());
+    try {
+      localStorage.setItem('darkMode', darkMode.toString());
+    } catch (e) {
+      console.warn('localStorage write blocked or unavailable on this browser:', e);
+    }
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -83,6 +93,7 @@ export default function App() {
     const contractsQuery = collection(db, 'contracts');
     
     const unsubscribe = onSnapshot(contractsQuery, async (snapshot) => {
+      setConnectionError(null);
       const loaded: Contract[] = [];
       snapshot.forEach((docSnap) => {
         loaded.push(docSnap.data() as Contract);
@@ -97,6 +108,9 @@ export default function App() {
           }
         } catch (e) {
           console.error('Falha ao inicializar base do Firestore:', e);
+          // Graceful local fallback if write fails on block/permissions
+          setContracts(INITIAL_CONTRACTS);
+          setIsReady(true);
         }
       } else {
         // Proactively insert the system setup marker if it is missing from legacy databases
@@ -117,7 +131,11 @@ export default function App() {
         setIsReady(true);
       }
     }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'contracts');
+      console.warn('Firestore real-time subscription blocked or failed. Activating local template storage fallback:', error);
+      // Fallback securely to starting templates so the user can still use the app in offline/blocked environments!
+      setConnectionError(error instanceof Error ? error.message : String(error));
+      setContracts(INITIAL_CONTRACTS);
+      setIsReady(true);
     });
 
     return () => unsubscribe();
@@ -215,6 +233,16 @@ export default function App() {
       
       {/* Visual top accent line representing primary colors: white + light blue gradient */}
       <div className="h-1.5 bg-gradient-to-r from-sky-400 via-white to-sky-400 dark:from-sky-500 dark:via-slate-850 dark:to-sky-500 w-full" />
+
+      {/* Graceful Connection Fallback Alert for Adblock / Private Mobile Browsing */}
+      {connectionError && (
+        <div className="bg-amber-500 text-slate-950 px-4 py-2 text-center text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all animate-fade-in relative z-50 select-none">
+          <ShieldAlert className="w-4 h-4 shrink-0" />
+          <span>
+            <strong>Modo Demonstrativo Ativo:</strong> A conexão com o banco de dados foi limitada pelo seu dispositivo (ou bloqueada por adblock/modo privado). O site carregou um banco de dados local para você poder interagir!
+          </span>
+        </div>
+      )}
 
       {/* Main Layout Header banner */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 shadow-xs transition-colors duration-200">
