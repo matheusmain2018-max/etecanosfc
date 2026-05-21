@@ -15,6 +15,7 @@ interface PlayerViewProps {
     signatureDataUrl: string, 
     extraData?: { birthDate?: string; photoDataUrl?: string; bidNumber?: string; bidProtocol?: string }
   ) => Promise<void>;
+  initialCode?: string;
 }
 
 // Utility function to compress images using Canvas (making high-res mobile photos super lightweight for Firestore)
@@ -66,7 +67,7 @@ const compressImage = (base64Str: string, maxWidth = 250, maxHeight = 300, quali
   });
 };
 
-export default function PlayerView({ contracts, onSignContract }: PlayerViewProps) {
+export default function PlayerView({ contracts, onSignContract, initialCode }: PlayerViewProps) {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [activeContract, setActiveContract] = useState<Contract | null>(null);
@@ -74,6 +75,27 @@ export default function PlayerView({ contracts, onSignContract }: PlayerViewProp
   // Extra fields for BID Card
   const [birthDate, setBirthDate] = useState('');
   const [photoDataUrl, setPhotoDataUrl] = useState('');
+
+  // Auto-load code if set by the home view
+  React.useEffect(() => {
+    if (initialCode) {
+      setCode(initialCode);
+      setError('');
+      const match = contracts.find(
+        (c) => c.code.trim().toUpperCase() === initialCode.trim().toUpperCase()
+      );
+      if (match) {
+        setActiveContract(match);
+        setBirthDate(match.birthDate || '');
+        setPhotoDataUrl(match.photoDataUrl || '');
+        if (match.signatureDataUrl) {
+          setSignatureData(match.signatureDataUrl);
+        } else {
+          setSignatureData('');
+        }
+      }
+    }
+  }, [initialCode, contracts]);
 
   // Temporary signature holder
   const [signatureData, setSignatureData] = useState('');

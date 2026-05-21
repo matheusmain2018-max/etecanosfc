@@ -11,9 +11,24 @@ interface AdminPanelProps {
   contracts: Contract[];
   onAddContract: (contract: Omit<Contract, 'id' | 'code' | 'status'>) => void;
   onDeleteContract: (id: string) => void;
+  onUpdateOverall: (id: string, newOverall: number) => void;
 }
 
-export default function AdminPanel({ contracts, onAddContract, onDeleteContract }: AdminPanelProps) {
+// Age calculator helper
+function calculateAge(birthDateString?: string): number {
+  if (!birthDateString) return 0;
+  const today = new Date();
+  const birthDate = new Date(birthDateString);
+  if (isNaN(birthDate.getTime())) return 0;
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+export default function AdminPanel({ contracts, onAddContract, onDeleteContract, onUpdateOverall }: AdminPanelProps) {
   // Authentication State
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('admin');
@@ -27,6 +42,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
   const [durationMonths, setDurationMonths] = useState(12);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [shirtNumber, setShirtNumber] = useState('');
+  const [overallRating, setOverallRating] = useState('85');
   const [notes, setNotes] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
 
@@ -75,7 +91,8 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
       durationMonths: Number(durationMonths),
       startDate,
       shirtNumber: shirtNumber ? Number(shirtNumber) : undefined,
-      notes: notes.trim() || undefined
+      notes: notes.trim() || undefined,
+      overallRating: overallRating ? Number(overallRating) : undefined
     });
 
     // Reset Form
@@ -85,6 +102,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
     setDurationMonths(12);
     setStartDate(new Date().toISOString().split('T')[0]);
     setShirtNumber('');
+    setOverallRating('85');
     setNotes('');
     
     setFormSuccess('Sucesso! O pré-contrato foi gerado com chave única de acesso.');
@@ -121,7 +139,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
   if (!isLoggedIn) {
     return (
       <div className="max-w-md mx-auto py-12 px-4">
-        <div id="admin-login-card" className="bg-white border border-slate-100 rounded-3xl shadow-2xl overflow-hidden transition-all duration-350 hover:shadow-sky-100/60">
+        <div id="admin-login-card" className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all duration-350 hover:shadow-sky-100/60">
           
           {/* Elegant header banner using sky blue + slate styling */}
           <div className="bg-gradient-to-b from-sky-500 to-sky-700 p-8 text-white text-center relative overflow-hidden">
@@ -140,14 +158,14 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
           <div className="p-8 space-y-6">
             <form onSubmit={handleLogin} className="space-y-5">
               {error && (
-                <div className="flex items-start gap-3 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-xs text-rose-700 animate-fadeIn">
-                  <ShieldAlert className="w-5 h-5 shrink-0 text-rose-600" />
+                <div className="flex items-start gap-3 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-xs text-rose-700 animate-fadeIn bg-rose-950/20 border-rose-900/30">
+                  <ShieldAlert className="w-5 h-5 shrink-0 text-rose-605 text-rose-550" />
                   <span className="font-medium leading-relaxed">{error}</span>
                 </div>
               )}
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 block uppercase tracking-wider">Usuário Administrador</label>
+                <label className="text-xs font-bold text-slate-505 text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Usuário Administrador</label>
                 <div className="relative">
                   <User className="absolute left-3.5 top-3 w-5 h-5 text-slate-400" />
                   <input
@@ -156,14 +174,14 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Ex: admin"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all font-medium"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-800 dark:text-slate-100 transition-all font-medium"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 block uppercase tracking-wider">Senha Diretora de Elenco</label>
+                <label className="text-xs font-bold text-slate-505 text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Senha Diretora de Elenco</label>
                 <div className="relative">
                   <KeyRound className="absolute left-3.5 top-3 w-5 h-5 text-slate-400" />
                   <input
@@ -172,7 +190,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Sua senha secreta de acesso"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all font-mono"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-800 dark:text-slate-100 transition-all font-mono"
                     required
                     autoFocus
                   />
@@ -200,21 +218,21 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
     <div className="space-y-8 animate-fadeIn">
       
       {/* Visual top greeting with nice light blue glow */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-50 through-white to-sky-50/20 p-6 rounded-3xl border border-sky-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-50 through-white to-sky-50/20 dark:from-sky-950/20 dark:through-slate-900 dark:to-sky-950/10 p-6 rounded-3xl border border-sky-100 dark:border-sky-900/40">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs uppercase font-extrabold text-sky-800 tracking-wider">Diretoria Eteen-FC Conectada</span>
+            <span className="text-xs uppercase font-extrabold text-sky-800 dark:text-sky-400 tracking-wider">Diretoria Eteen-FC Conectada</span>
           </div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Painel de Licenciamento Desportivo</h2>
-          <p className="text-xs text-slate-500">Crie propostas personalizadas e envie as chaves de convite única para cada jogador assinar.</p>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Painel de Licenciamento Desportivo</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Crie propostas personalizadas e envie as chaves de convite única para cada jogador assinar.</p>
         </div>
 
         <button
           id="admin-logout-btn"
           type="button"
           onClick={() => setIsLoggedIn(false)}
-          className="text-xs text-rose-600 hover:text-white hover:bg-rose-600 font-bold bg-white px-4 py-2 rounded-xl border border-rose-200 transition-all select-none self-start md:self-center cursor-pointer"
+          className="text-xs text-rose-600 hover:text-white hover:bg-rose-600 font-bold bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-rose-200 dark:border-rose-900/40 transition-all select-none self-start md:self-center cursor-pointer"
         >
           Desconectar Sessão
         </button>
@@ -223,57 +241,57 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
       {/* Overview Dashboard Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         
-        <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-xs transition-all hover:border-sky-300">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-xs transition-all hover:border-sky-305 dark:hover:border-sky-700">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Elenco Cadastrado</span>
-            <div className="bg-slate-50 p-2 rounded-xl text-slate-500 border border-slate-100">
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Elenco Cadastrado</span>
+            <div className="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-800">
               <Users className="w-5 h-5" />
             </div>
           </div>
           <div className="space-y-0.5">
-            <span className="text-3xl font-black text-slate-800 font-mono tracking-tight">{totalContracts}</span>
-            <p className="text-[11px] text-slate-400">Total de propostas de contratos</p>
+            <span className="text-3xl font-black text-slate-800 dark:text-slate-100 font-mono tracking-tight">{totalContracts}</span>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Total de propostas de contratos</p>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-xs transition-all hover:border-emerald-300">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-xs transition-all hover:border-emerald-305 dark:hover:border-emerald-700">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Firmados (BID)</span>
-            <div className="bg-emerald-50 p-2 rounded-xl text-emerald-600 border border-emerald-100">
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Firmados (BID)</span>
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-xl text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40">
               <UserCheck className="w-5 h-5" />
             </div>
           </div>
           <div className="space-y-0.5">
-            <span className="text-3xl font-black text-emerald-600 font-mono tracking-tight">{signedContracts}</span>
-            <p className="text-[11px] text-emerald-500">Atletas que já assinaram</p>
+            <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{signedContracts}</span>
+            <p className="text-[11px] text-emerald-500 dark:text-emerald-400">Atletas que já assinaram</p>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-xs transition-all hover:border-amber-300">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-xs transition-all hover:border-amber-305 dark:hover:border-amber-700">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Envios Pendentes</span>
-            <div className="bg-amber-50/50 p-2 rounded-xl text-amber-600 border border-amber-100">
-              <AlertCircle className="w-5 h-5 text-amber-550" />
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Envios Pendentes</span>
+            <div className="bg-amber-50/50 dark:bg-amber-950/40 p-2 rounded-xl text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/40">
+              <AlertCircle className="w-5 h-5 text-amber-550 dark:text-amber-400" />
             </div>
           </div>
           <div className="space-y-0.5">
-            <span className="text-3xl font-black text-amber-500 font-mono tracking-tight">{pendingContracts}</span>
-            <p className="text-[11px] text-amber-500">Aguardando assinatura</p>
+            <span className="text-3xl font-black text-amber-500 dark:text-amber-450 font-mono tracking-tight">{pendingContracts}</span>
+            <p className="text-[11px] text-amber-500 dark:text-amber-400">Aguardando assinatura</p>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200/80 p-4.5 rounded-2xl shadow-xs transition-all hover:border-indigo-300">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4.5 rounded-2xl shadow-xs transition-all hover:border-indigo-305 dark:hover:border-indigo-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Folha Líquida Ativa</span>
-            <div className="bg-indigo-50 p-2 rounded-xl text-indigo-600 border border-indigo-100">
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Folha Líquida Ativa</span>
+            <div className="bg-indigo-50 dark:bg-indigo-950/40 p-2 rounded-xl text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30">
               <TrendingUp className="w-5 h-5" />
             </div>
           </div>
           <div className="space-y-0.5">
-            <span className="text-2xl font-black text-indigo-700 font-mono tracking-tight">
+            <span className="text-2xl font-black text-indigo-700 dark:text-indigo-400 font-mono tracking-tight">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(totalPayroll)}
             </span>
-            <p className="text-[11px] text-indigo-500">Mensal dos contratos ativos</p>
+            <p className="text-[11px] text-indigo-500 dark:text-indigo-450">Mensal dos contratos ativos</p>
           </div>
         </div>
 
@@ -282,53 +300,67 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Creation Form Block: visual card */}
-        <div className="lg:col-span-5 bg-white border border-slate-200/80 p-6 rounded-3xl shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
-            <div className="p-2 bg-sky-50 rounded-xl">
-              <Sparkles className="w-5 h-5 text-sky-650" />
+        <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-6 text-slate-800 dark:text-slate-100">
+          <div className="flex items-center gap-2 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="p-2 bg-sky-50 dark:bg-sky-950/40 rounded-xl">
+              <Sparkles className="w-5 h-5 text-sky-600 dark:text-sky-400" />
             </div>
             <div>
-              <h3 className="font-extrabold text-slate-800 text-base">Novo Vínculo Esportivo</h3>
-              <p className="text-[11px] text-slate-400">Preencha os termos financeiros do jogador</p>
+              <h3 className="font-extrabold text-slate-800 dark:text-slate-200 text-base">Novo Vínculo Esportivo</h3>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Preencha os termos financeiros do jogador</p>
             </div>
           </div>
 
           {formSuccess && (
-            <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs text-emerald-800 flex items-start gap-2.5 animate-fadeIn">
-              <Check className="w-5 h-5 shrink-0 text-emerald-600" />
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 rounded-2xl text-xs text-emerald-800 dark:text-emerald-400 flex items-start gap-2.5 animate-fadeIn font-medium">
+              <Check className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>{formSuccess}</span>
             </div>
           )}
 
           <form onSubmit={handleCreateContract} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Nome Oficial do Atleta</label>
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Nome Oficial do Atleta</label>
               <input
                 id="form-player-name"
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder="Ex: Gabriel Barbosa Silva"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all text-slate-800 placeholder-slate-400"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-850 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 transition-all"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Camisa Sugerida</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Camisa Sugerida</label>
                 <input
                   id="form-shirt-number"
                   type="number"
                   value={shirtNumber}
                   onChange={(e) => setShirtNumber(e.target.value)}
                   placeholder="Ex: 9"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm font-semibold focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all font-mono"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3.5 text-sm font-semibold focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-850 dark:text-slate-100 font-mono transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Posição do Atleta</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Nível OVR (Carta FIFA)</label>
+                <input
+                  id="form-overall-rating"
+                  type="number"
+                  min="50"
+                  max="99"
+                  value={overallRating}
+                  onChange={(e) => setOverallRating(e.target.value)}
+                  placeholder="De 50 a 99 (Ex: 85)"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3.5 text-sm font-semibold focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 font-mono text-amber-600 dark:text-amber-400 transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Posição do Atleta</label>
                 <input
                   id="form-position"
                   type="text"
@@ -336,7 +368,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                   onChange={(e) => setPosition(e.target.value)}
                   list="positions-list"
                   placeholder="Ex: Volante e Atacante, outros..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm font-bold focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all text-slate-800"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3.5 text-sm font-bold focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-850 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 transition-all"
                 />
                 <datalist id="positions-list">
                   {fieldPositions.map((pos) => (
@@ -348,34 +380,34 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                   <option value="Ponta / Meio-Campo">Ponta / Meio-Campo</option>
                   <option value="Outros">Outros</option>
                 </datalist>
-                <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">Dica: Selecione da lista ou escreva o que desejar.</span>
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 block mt-0.5 font-medium leading-none">Selecione ou escreva livremente.</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Salário Mensal (R$)</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Salário Mensal (R$)</label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-slate-400 text-sm font-bold">R$</span>
+                  <span className="absolute left-3.5 top-2.5 text-slate-400 dark:text-slate-555 font-bold text-sm">R$</span>
                   <input
                     id="form-salary"
                     type="number"
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
                     placeholder="Ex: 8500"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-3.5 text-sm font-bold focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all font-mono text-slate-800"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-10 pr-3.5 text-sm font-bold focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 font-mono text-slate-850 dark:text-slate-100 transition-all"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Vigência (Meses)</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Vigência (Meses)</label>
                 <select
                   id="form-duration"
                   value={durationMonths}
                   onChange={(e) => setDurationMonths(Number(e.target.value))}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-2.5 text-sm font-bold focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all text-slate-700 cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-2.5 text-sm font-bold focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-700 dark:text-slate-100 transition-all cursor-pointer"
                 >
                   <option value={3}>3 Meses (Experiência)</option>
                   <option value={6}>6 Meses (Curto)</option>
@@ -387,7 +419,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Início da Atividade no Clube</label>
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Início da Atividade no Clube</label>
               <div className="relative">
                 <Calendar className="absolute right-3.5 top-3 w-4.5 h-4.5 text-slate-400 pointer-events-none" />
                 <input
@@ -395,21 +427,21 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-850 dark:text-slate-100 transition-all"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Premiações ou Observações</label>
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Premiações ou Observações</label>
               <textarea
                 id="form-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Ex: Auxílio moradia, bônus por partida ganha de R$ 300, etc."
                 rows={3}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all placeholder-slate-400"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-850 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 transition-all"
               />
             </div>
 
@@ -425,12 +457,12 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
         </div>
 
         {/* Existing Contracts List Grid: visual card */}
-        <div className="lg:col-span-7 bg-white border border-slate-200/80 p-6 rounded-3xl shadow-sm flex flex-col min-h-[500px] space-y-4">
+        <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-3xl shadow-sm flex flex-col min-h-[500px] space-y-4 text-slate-800 dark:text-slate-100">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <h3 className="font-extrabold text-slate-800 text-base">Banco de Contratos e Atletas</h3>
-              <p className="text-[11px] text-slate-400">Monitore, apague ou copie os códigos de assinatura</p>
+              <h3 className="font-extrabold text-slate-800 dark:text-slate-200 text-base">Banco de Contratos e Atletas</h3>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Monitore, apague ou copie os códigos de assinatura</p>
             </div>
             
             {/* Search Input Custom Icon Styling */}
@@ -442,7 +474,7 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                 placeholder="Buscar jogador, cargo ou código..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-4 text-xs font-medium focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2 pl-9 pr-4 text-xs font-medium focus:bg-white focus:dark:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 text-slate-850 dark:text-slate-100 transition-all"
               />
             </div>
           </div>
@@ -465,29 +497,34 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
                   id={`contract-item-${contract.id}`}
                   className={`border rounded-2xl p-5 transition-all duration-200 ${
                     selectedContract?.id === contract.id 
-                    ? 'border-sky-450 ring-4 ring-sky-500/5 bg-sky-50/5 shadow-xs' 
-                    : 'border-slate-150 hover:border-slate-300'
+                    ? 'border-sky-500/50 ring-4 ring-sky-500/5 bg-sky-50/10 dark:bg-sky-950/20 shadow-xs' 
+                    : 'border-slate-150 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-extrabold text-slate-800 text-sm md:text-base tracking-tight">{contract.playerName}</span>
+                        <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm md:text-base tracking-tight">{contract.playerName}</span>
                         {contract.shirtNumber && (
-                          <span className="bg-sky-100 text-sky-850 text-[10px] font-black px-2 py-0.5 rounded-md border border-sky-200">
+                          <span className="bg-sky-100 dark:bg-sky-950/40 text-sky-850 dark:text-sky-300 text-[10px] font-black px-2 py-0.5 rounded-md border border-sky-200 dark:border-sky-900/40">
                             CAMISA {contract.shirtNumber}
+                          </span>
+                        )}
+                        {contract.overallRating && (
+                          <span className="bg-amber-100 dark:bg-amber-950/40 text-amber-850 dark:text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-900/40">
+                            OVR {contract.overallRating}
                           </span>
                         )}
                       </div>
                       
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 font-medium">
-                        <span className="bg-slate-100 font-extrabold text-slate-600 px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wide">{contract.position}</span>
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        <span className="bg-slate-100 dark:bg-slate-950 font-extrabold text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wide">{contract.position}</span>
                         <span>•</span>
-                        <span className="font-bold text-slate-800 font-mono">
+                        <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(contract.salary)}/mês
                         </span>
                         <span>•</span>
-                        <span className="bg-sky-50/60 text-sky-700 font-bold px-1.5 py-0.3 rounded text-[10px]">{contract.durationMonths} Meses</span>
+                        <span className="bg-sky-50/60 dark:bg-sky-950/30 text-sky-700 dark:text-sky-405 font-bold px-1.5 py-0.3 rounded text-[10px]">{contract.durationMonths} Meses</span>
                       </div>
                     </div>
 
@@ -611,33 +648,74 @@ export default function AdminPanel({ contracts, onAddContract, onDeleteContract 
 
                   {/* Expanded Detail Draw container containing nice football metrics */}
                   {selectedContract?.id === contract.id && (
-                    <div className="mt-4 p-4 border border-slate-200 bg-slate-50/50 rounded-2xl space-y-4 animate-fadeIn text-xs">
+                    <div className="mt-4 p-4 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 rounded-2xl space-y-4 animate-fadeIn text-xs">
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-600">
-                        <div className="bg-white p-3 rounded-xl border border-slate-150">
+                      {/* Interactive OVR Quick Editor block */}
+                      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 p-3.5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-700 dark:text-slate-300">
+                        <div className="flex items-center gap-2.5">
+                          <div className="p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg text-amber-605 text-amber-500">
+                            <Sparkles className="w-4.5 h-4.5" />
+                          </div>
+                          <div>
+                            <span className="font-extrabold block text-xs text-amber-800 dark:text-amber-400 uppercase tracking-wide leading-tight">Alterar OVR Desportivo</span>
+                            <span className="text-[10px] text-slate-450 dark:text-slate-400">Modifique a força da carta FIFA sem perder nenhuma assinatura.</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                          <input 
+                            type="number"
+                            min="50"
+                            max="99"
+                            defaultValue={contract.overallRating || 85}
+                            id={`ovr-edit-input-${contract.id}`}
+                            className="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-1.5 px-2 text-center text-xs font-black font-mono text-amber-600 dark:text-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const inputEl = document.getElementById(`ovr-edit-input-${contract.id}`) as HTMLInputElement;
+                              if (inputEl) {
+                                const newOvr = parseInt(inputEl.value);
+                                if (newOvr >= 50 && newOvr <= 99) {
+                                  onUpdateOverall(contract.id, newOvr);
+                                  alert(`Overall de ${contract.playerName} atualizado com sucesso para ${newOvr}!`);
+                                } else {
+                                  alert("Valor inválido! O OVR deve estar entre 50 e 99.");
+                                }
+                              }
+                            }}
+                            className="bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all shadow-xs shrink-0 cursor-pointer select-none"
+                          >
+                            Salvar OVR
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-605">
+                        <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
                           <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Início da Proposta:</span>
-                          <span className="text-slate-800 font-extrabold text-xs">
+                          <span className="text-slate-800 dark:text-slate-100 font-extrabold text-xs">
                             {new Date(contract.startDate).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
                           </span>
                         </div>
-                        <div className="bg-white p-3 rounded-xl border border-slate-150">
+                        <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
                           <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Duração de Contrato:</span>
-                          <span className="text-slate-800 font-extrabold text-xs">
+                          <span className="text-slate-800 dark:text-slate-100 font-extrabold text-xs">
                             {contract.durationMonths} meses ({Number(contract.durationMonths)/12 >= 1 ? `${Number(contract.durationMonths)/12} Ano(s)` : 'Curta Duração'})
                           </span>
                         </div>
                         {contract.birthDate && (
-                          <div className="bg-white p-3 rounded-xl border border-slate-150">
-                            <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Data de Nascimento:</span>
-                            <span className="text-slate-800 font-extrabold text-xs">
-                              {new Date(contract.birthDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+                          <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
+                            <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Idade do Atleta:</span>
+                            <span className="text-slate-800 dark:text-slate-100 font-extrabold text-xs">
+                              {calculateAge(contract.birthDate)} anos ({new Date(contract.birthDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })})
                             </span>
                           </div>
                         )}
                         {contract.bidNumber && (
-                          <div className="bg-white p-3 rounded-xl border border-slate-150">
+                          <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-150 dark:border-slate-805 dark:border-slate-800">
                             <span className="font-bold block text-[9px] text-slate-400 uppercase tracking-widest mb-1">Inscrição B.I.D. Oficial:</span>
-                            <span className="text-indigo-800 font-extrabold text-xs font-mono">
+                            <span className="text-indigo-805 dark:text-indigo-400 font-extrabold text-xs font-mono">
                               {contract.bidNumber} ({contract.bidProtocol})
                             </span>
                           </div>

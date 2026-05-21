@@ -15,6 +15,7 @@ export interface Contract {
   photoDataUrl?: string; // Optional custom player headshot uploaded at signing time
   bidNumber?: string; // Auto-generated 6-digit BID enrollment code
   bidProtocol?: string; // Auto-generated contract register protocol (e.g., "1681206SP")
+  overallRating?: number; // Configurable FUT Overall card rating (e.g., 50 to 99)
 }
 
-export type ActiveTab = 'player' | 'admin';
+export type ActiveTab = 'elenco' | 'player' | 'admin';
