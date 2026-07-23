@@ -136,9 +136,9 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
       
       // Add Bilau Lombrado FC official logo to header
       try {
-        doc.addImage(logoImg, 'JPEG', 17.5, 15.5, 21, 21);
-      } catch {
         doc.addImage(logoImg, 'PNG', 17.5, 15.5, 21, 21);
+      } catch {
+        doc.addImage(logoImg, 'JPEG', 17.5, 15.5, 21, 21);
       }
     } catch (err) {
       console.error('Failed to draw header image: ', err);
@@ -366,7 +366,7 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
 
   // Save the file
   const safePlayerName = contract.playerName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-  doc.save(`contrato_etecanos_${safePlayerName}.pdf`);
+  doc.save(`contrato_bilau_lombrado_${safePlayerName}.pdf`);
 }
 
 export function formatDateTimeBr(dateString?: string): string {
@@ -504,9 +504,9 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
   if (logoImg) {
     try {
       try {
-        doc.addImage(logoImg, 'JPEG', detailsX, bottomLogoY, 13, 13);
-      } catch {
         doc.addImage(logoImg, 'PNG', detailsX, bottomLogoY, 13, 13);
+      } catch {
+        doc.addImage(logoImg, 'JPEG', detailsX, bottomLogoY, 13, 13);
       }
     } catch (e) {
       console.error('Failed to draw bottom logo on BID card:', e);
@@ -520,7 +520,7 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
   doc.setFont('Helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(15, 23, 42);
-  doc.text('Etecanos / SP', detailsX + 16, bottomLogoY + 8);
+  doc.text('Bilau Lombrado FC / SP', detailsX + 16, bottomLogoY + 8);
 
   // Cut-out guidelines underneath card
   doc.setDrawColor(203, 213, 225); // slate-300
@@ -591,5 +591,5 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
 
   // Save PDF
   const safePlayerName = contract.playerName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-  doc.save(`carteirinha_bid_etecanos_${safePlayerName}.pdf`);
+  doc.save(`carteirinha_bid_${safePlayerName}.pdf`);
 }

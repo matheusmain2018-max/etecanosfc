@@ -254,7 +254,10 @@ function FutCard({
                   src="/logo.png" 
                   alt="Bilau Lombrado FC" 
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain p-0.5"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "https://i.imgur.com/8HSE8i8.png";
+                  }}
                 />
               </div>
 

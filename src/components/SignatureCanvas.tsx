@@ -190,7 +190,7 @@ export default function SignatureCanvas({ onSave, onClear, playerName = '', id =
     ctx.textBaseline = 'middle';
     
     // Draw the name
-    const textToDraw = playerName ? playerName : 'Atleta Etecanos';
+    const textToDraw = playerName ? playerName : 'Atleta Bilau Lombrado FC';
     ctx.fillText(textToDraw, rect.width / 2, rect.height / 2);
     
     setHasSignature(true);

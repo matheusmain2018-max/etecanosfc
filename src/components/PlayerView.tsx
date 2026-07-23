@@ -127,7 +127,7 @@ export default function PlayerView({ contracts, onSignContract, initialCode }: P
         setSignatureData('');
       }
     } else {
-      setError('Código ou senha não cadastrados. Verifique se digitou as letras e números corretamente ou solicite uma nova via com a comissão técnica do Etecanos.');
+      setError('Código ou senha não cadastrados. Verifique se digitou as letras e números corretamente ou solicite uma nova via com a comissão técnica do Bilau Lombrado FC.');
     }
   };
 
