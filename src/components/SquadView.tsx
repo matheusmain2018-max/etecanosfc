@@ -248,13 +248,16 @@ function FutCard({
                 <path d="M228 322.5c20-67 114-118.5 242-118.5 20.5 0 40 1 58.5 3-19.5-6.5-40-10-62-10-128 0-222 51.5-242 118.5z" fill="#fff"/>
               </svg>
               
-              {/* Etecanos custom circular shield badge */}
+              {/* BILAU LOMBRADO custom circular shield badge */}
               <div className="w-6.5 h-6.5 rounded-full overflow-hidden mt-2.5 border border-[#d4af37]/60 shadow-md relative group-hover:scale-110 transition-transform duration-300 flex items-center justify-center bg-[#1e1911]">
                 <img 
-                  src="https://i.imgur.com/gLgiJ2x.png" 
-                  alt="Etecanos FC" 
+                  src="/logo.png" 
+                  alt="Bilau Lombrado FC" 
                   referrerPolicy="no-referrer"
                   className="w-5.5 h-5.5 object-contain"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "https://i.imgur.com/8HSE8i8.png";
+                  }}
                 />
               </div>
 
@@ -434,71 +437,71 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
     <div className="space-y-10 animate-fade-in pb-12">
       
       {/* Club Billboard / Poster */}
-      <div className="relative overflow-hidden bg-radial from-slate-900 via-slate-950 to-black text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-800">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-red-950 via-[#180307] to-black text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-red-900/40">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/15 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-3 text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full text-xs font-semibold text-amber-400 tracking-wide uppercase font-mono">
-              <Award className="w-3.5 h-3.5" /> Elenco Principal ETECANOS FC
+              <Award className="w-3.5 h-3.5" /> Elenco Principal BILAU LOMBRADO FC
             </div>
             <h2 className="text-3xl sm:text-4.5xl font-black tracking-tight leading-none bg-gradient-to-r from-amber-200 via-amber-100 to-amber-400 bg-clip-text text-transparent">
               Todos os Membros do Elenco
             </h2>
-            <p className="text-sm text-slate-300 max-w-xl font-medium leading-relaxed">
-              Estes são todos os guerreiros e craques registrados oficialmente que entram em campo defendendo o Etecanos FC. Clique na carta de qualquer atleta para ver os dados do contrato, assinatura digital e baixar a carteirinha oficial do BID.
+            <p className="text-sm text-stone-300 max-w-xl font-medium leading-relaxed">
+              Estes são todos os guerreiros e craques registrados oficialmente que entram em campo defendendo o Bilau Lombrado FC. Clique na carta de qualquer atleta para ver os dados do contrato, assinatura digital e baixar a carteirinha oficial do BID.
             </p>
           </div>
 
-          <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 backdrop-blur-md shrink-0">
-            <div className="text-center px-4 border-r border-slate-800">
+          <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-3 bg-[#180509]/80 p-4 rounded-2xl border border-red-900/30 backdrop-blur-md shrink-0">
+            <div className="text-center px-4 border-r border-red-900/40">
               <span className="text-2xl sm:text-3xl font-black text-amber-400 block tracking-tight">{stats.total}</span>
-              <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest block">Elenco</span>
+              <span className="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest block">Elenco</span>
             </div>
-            <div className="text-center px-4 border-r border-slate-800">
-              <span className="text-md sm:text-lg font-black text-slate-200 block tracking-tight">{stats.goleiros}</span>
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">GOL</span>
+            <div className="text-center px-4 border-r border-red-900/40">
+              <span className="text-md sm:text-lg font-black text-stone-200 block tracking-tight">{stats.goleiros}</span>
+              <span className="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">GOL</span>
             </div>
-            <div className="text-center px-4 border-r border-slate-800">
-              <span className="text-md sm:text-lg font-black text-slate-200 block tracking-tight">{stats.defensores}</span>
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">DEF</span>
+            <div className="text-center px-4 border-r border-red-900/40">
+              <span className="text-md sm:text-lg font-black text-stone-200 block tracking-tight">{stats.defensores}</span>
+              <span className="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">DEF</span>
             </div>
-            <div className="text-center px-4 border-r border-slate-800">
-              <span className="text-md sm:text-lg font-black text-slate-200 block tracking-tight">{stats.meioCampistas}</span>
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">MEI</span>
+            <div className="text-center px-4 border-r border-red-900/40">
+              <span className="text-md sm:text-lg font-black text-stone-200 block tracking-tight">{stats.meioCampistas}</span>
+              <span className="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">MEI</span>
             </div>
             <div className="text-center px-4">
-              <span className="text-md sm:text-lg font-black text-slate-200 block tracking-tight">{stats.atacantes}</span>
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">ATA</span>
+              <span className="text-md sm:text-lg font-black text-stone-200 block tracking-tight">{stats.atacantes}</span>
+              <span className="text-[9px] text-stone-400 font-bold uppercase tracking-wider block">ATA</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Database Search Hub */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 bg-white dark:bg-slate-900 p-4.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs transition-colors duration-200">
+      <div className="flex flex-col sm:flex-row items-center gap-4 bg-white dark:bg-[#140609] p-4.5 rounded-2xl border border-stone-200 dark:border-red-950/60 shadow-xs transition-colors duration-200">
         <div className="relative w-full sm:flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-stone-400 dark:text-stone-500" />
           <input
             type="text"
             placeholder="Buscar jogador no elenco por nome ou posição..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10.5 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
+            className="w-full pl-10.5 pr-4 py-2.5 bg-stone-50 dark:bg-[#070103] border border-stone-200 dark:border-red-950/60 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500"
           />
           {searchTerm && (
             <button 
               onClick={() => setSearchTerm('')} 
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 font-bold text-xs bg-slate-200 dark:bg-slate-850 rounded-full w-5 h-5 flex items-center justify-center transition-all cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300 font-bold text-xs bg-stone-200 dark:bg-red-950/60 rounded-full w-5 h-5 flex items-center justify-center transition-all cursor-pointer"
             >
               ✕
             </button>
           )}
         </div>
-        <div className="text-xs text-slate-400 dark:text-slate-500 font-bold tracking-wider uppercase shrink-0 bg-slate-100 dark:bg-slate-955 px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-transparent dark:border-slate-800/80">
+        <div className="text-xs text-stone-400 dark:text-stone-500 font-bold tracking-wider uppercase shrink-0 bg-stone-100 dark:bg-[#080204] px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-transparent dark:border-red-950/60">
           <span>Atletas Filtrados:</span>
-          <span className="text-slate-800 dark:text-slate-300 font-black">{filteredPlayers.length}</span>
+          <span className="text-stone-800 dark:text-stone-300 font-black">{filteredPlayers.length}</span>
         </div>
       </div>
 
@@ -560,10 +563,10 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest block">Dica operacional:</span>
               <div className="flex gap-2">
                 <button
-                  onClick={() => onNavigateToSign('ETEC-1010')}
-                  className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                  onClick={() => onNavigateToSign('BL-1010')}
+                  className="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-xs"
                 >
-                  Assinar Gabriel (ETEC-1010)
+                  Assinar Gabriel (BL-1010)
                 </button>
               </div>
             </div>
@@ -573,11 +576,11 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
 
       {/* Expanded Athlete Detail Overlay Modal (Directly displays PDF Documents printing options and full private dossier) */}
       {selectedPlayer && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-150 dark:border-slate-800 relative animate-scale-up">
+        <div className="fixed inset-0 bg-[#0a0204]/85 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-[#140609] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-150 dark:border-red-950/60 relative animate-scale-up">
             
             {/* Header branding block */}
-            <div className="bg-radial from-slate-900 to-slate-950 text-white p-6 relative">
+            <div className="bg-gradient-to-br from-red-950 to-[#0e0305] text-white p-6 relative">
               <button 
                 onClick={() => setSelectedPlayer(null)}
                 className="absolute top-4 right-4 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-full p-1.5 transition-colors cursor-pointer animate-pulse"
@@ -620,43 +623,43 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/60">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Inscrição CBF (BID)</span>
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-mono">{selectedPlayer.bidNumber || 'Gerando no BID'}</span>
+                  <div className="bg-stone-50 dark:bg-[#070103] p-3 rounded-2xl border border-stone-100 dark:border-red-950/60">
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500 font-extrabold uppercase tracking-wide block mb-0.5">Inscrição CBF (BID)</span>
+                    <span className="text-sm font-bold text-stone-800 dark:text-stone-200 font-mono">{selectedPlayer.bidNumber || 'Gerando no BID'}</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/60">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Protocolo de Vínculo</span>
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-mono">{selectedPlayer.bidProtocol || 'Automático'}</span>
+                  <div className="bg-stone-50 dark:bg-[#070103] p-3 rounded-2xl border border-stone-100 dark:border-red-950/60">
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500 font-extrabold uppercase tracking-wide block mb-0.5">Protocolo de Vínculo</span>
+                    <span className="text-sm font-bold text-stone-800 dark:text-stone-200 font-mono">{selectedPlayer.bidProtocol || 'Automático'}</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/60">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Idade</span>
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedPlayer.birthDate ? `${calculateAge(selectedPlayer.birthDate)} anos` : 'Não Fornecido'}</span>
+                  <div className="bg-stone-50 dark:bg-[#070103] p-3 rounded-2xl border border-stone-100 dark:border-red-950/60">
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500 font-extrabold uppercase tracking-wide block mb-0.5">Idade</span>
+                    <span className="text-sm font-bold text-stone-800 dark:text-stone-200">{selectedPlayer.birthDate ? `${calculateAge(selectedPlayer.birthDate)} anos` : 'Não Fornecido'}</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/60">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Homologação no Clube</span>
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedPlayer.signedAt ? formatDateBr(selectedPlayer.signedAt) : 'N/A'}</span>
+                  <div className="bg-stone-50 dark:bg-[#070103] p-3 rounded-2xl border border-stone-100 dark:border-red-950/60">
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500 font-extrabold uppercase tracking-wide block mb-0.5">Homologação no Clube</span>
+                    <span className="text-sm font-bold text-stone-800 dark:text-stone-200">{selectedPlayer.signedAt ? formatDateBr(selectedPlayer.signedAt) : 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Cláusulas e Trabalho</h4>
+              <div className="space-y-3 pt-4 border-t border-stone-100 dark:border-red-950/60">
+                <h4 className="text-xs font-black text-stone-400 dark:text-stone-500 uppercase tracking-wider">Cláusulas e Trabalho</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider block mb-0.5">Salário Homologado</span>
-                    <span className="text-sm font-black text-slate-900 dark:text-white">{formatCurrency(selectedPlayer.salary)}/mês</span>
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500 font-extrabold uppercase tracking-wider block mb-0.5">Salário Homologado</span>
+                    <span className="text-sm font-black text-stone-900 dark:text-white">{formatCurrency(selectedPlayer.salary)}/mês</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider block mb-0.5">Início do Trabalho</span>
-                    <span className="text-sm font-black text-slate-900 dark:text-white">{selectedPlayer.startDate ? formatDateBr(selectedPlayer.startDate) : 'Na assinatura'}</span>
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500 font-extrabold uppercase tracking-wider block mb-0.5">Início do Trabalho</span>
+                    <span className="text-sm font-black text-stone-900 dark:text-white">{selectedPlayer.startDate ? formatDateBr(selectedPlayer.startDate) : 'Na assinatura'}</span>
                   </div>
                 </div>
               </div>
 
               {selectedPlayer.notes && (
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
-                  <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider font-mono">Acordos Internos</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 bg-amber-50/50 dark:bg-amber-950/20 p-3 rounded-xl font-medium leading-relaxed border border-amber-500/10">
+                <div className="pt-4 border-t border-stone-100 dark:border-red-950/60 space-y-1.5">
+                  <h4 className="text-xs font-black text-stone-400 dark:text-stone-500 uppercase tracking-wider font-mono">Acordos Internos</h4>
+                  <p className="text-xs text-stone-600 dark:text-stone-300 bg-amber-50/50 dark:bg-amber-950/20 p-3 rounded-xl font-medium leading-relaxed border border-amber-500/10">
                     {selectedPlayer.notes}
                   </p>
                 </div>
@@ -664,11 +667,11 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
 
               {/* Secure autograph preview */}
               {selectedPlayer.signatureDataUrl && (
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+                <div className="pt-4 border-t border-stone-100 dark:border-red-950/60 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Assinatura Certificada pelo Jogador</h4>
+                    <h4 className="text-xs font-black text-stone-400 dark:text-stone-500 uppercase tracking-wider">Assinatura Certificada pelo Jogador</h4>
                   </div>
-                  <div className="h-20 bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 rounded-2xl flex items-center justify-center p-3 relative overflow-hidden">
+                  <div className="h-20 bg-stone-50 dark:bg-[#070103] border border-stone-200/80 dark:border-red-950/60 rounded-2xl flex items-center justify-center p-3 relative overflow-hidden">
                     <img 
                       src={selectedPlayer.signatureDataUrl} 
                       alt="Assinatura" 
@@ -679,15 +682,15 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
               )}
 
               {/* Action area to download contracts securely */}
-              <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center gap-3">
+              <div className="pt-5 border-t border-stone-200/80 dark:border-red-950/60 flex flex-col sm:flex-row items-center gap-3">
                 <button
                   type="button"
                   onClick={(e) => {
                     handleDownloadBidCard(e, selectedPlayer);
                   }}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-amber-550 hover:bg-amber-600 bg-amber-500 text-slate-950 py-3 px-4 rounded-xl text-xs font-black tracking-wider uppercase transition-all shadow-sm hover:shadow-md cursor-pointer select-none"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-800 to-red-900 hover:from-red-700 hover:to-red-800 text-amber-300 py-3 px-4 rounded-xl text-xs font-black tracking-wider uppercase transition-all shadow-sm hover:shadow-md cursor-pointer select-none border border-amber-500/30"
                 >
-                  <CreditCard className="w-4.5 h-4.5 text-slate-950" />
+                  <CreditCard className="w-4.5 h-4.5 text-amber-300" />
                   <span>Baixar Carteira Oficial do BID</span>
                 </button>
               </div>
@@ -695,8 +698,8 @@ export default function SquadView({ contracts, onNavigateToSign }: SquadViewProp
             </div>
 
             {/* Bottom block */}
-            <div className="bg-slate-50 dark:bg-slate-950 px-6 py-4.5 text-center border-t border-slate-150 dark:border-slate-850">
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest block font-mono">ETECANOS FC • SISTEMA PROFISSIONAL INTEGRADO</span>
+            <div className="bg-stone-50 dark:bg-[#070103] px-6 py-4.5 text-center border-t border-stone-150 dark:border-red-950/60">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest block font-mono">BILAU LOMBRADO FC • SISTEMA PROFISSIONAL INTEGRADO</span>
             </div>
 
           </div>

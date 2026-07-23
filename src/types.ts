@@ -6,7 +6,7 @@ export interface Contract {
   durationMonths: number; // Duration in months (e.g. 12, 24)
   startDate: string; // ISO date string or formatted date
   notes?: string; // Special clauses or bonus conditions
-  code: string; // Unique contract validation code / password (e.g., ETEC-4819)
+  code: string; // Unique contract validation code / password (e.g., BL-4819)
   status: 'PENDING' | 'SIGNED';
   signatureDataUrl?: string; // Image base64 containing the contract visual signature
   signedAt?: string; // Timestamp when it was signed

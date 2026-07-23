@@ -15,15 +15,19 @@ export default function TeamLogo({ className = '', size = 'md' }: TeamLogoProps)
 
   return (
     <div className={`relative flex items-center justify-center ${sizes[size]} ${className}`}>
-      {/* Decorative pulse background representing official white and light-blue energy */}
-      <span className="absolute inset-0 rounded-full bg-sky-200/50 animate-pulse" />
+      {/* Decorative pulse background representing official team colors: gold and navy/red */}
+      <span className="absolute inset-0 rounded-full bg-amber-500/20 animate-pulse" />
       
-      {/* Official Clun Logo Image */}
+      {/* Official Club Logo Image */}
       <img
-        src="https://i.imgur.com/gLgiJ2x.png"
-        alt="ETECANOS FC"
+        src="/logo.png"
+        alt="BILAU LOMBRADO FC"
         referrerPolicy="no-referrer"
         className="w-full h-full object-contain relative z-10 drop-shadow-md select-none"
+        onError={(e) => {
+          // Fallback if local path has any resolution issue
+          (e.currentTarget as HTMLImageElement).src = "https://i.imgur.com/8HSE8i8.png";
+        }}
       />
     </div>
   );

@@ -23,7 +23,7 @@ const INITIAL_CONTRACTS: Contract[] = [
     startDate: '2026-06-01',
     shirtNumber: 9,
     notes: 'Bônus coletivo de R$ 300,00 por gol marcado na divisão regional.',
-    code: 'ETEC-1010',
+    code: 'BL-1010',
     status: 'PENDING'
   },
   {
@@ -35,7 +35,7 @@ const INITIAL_CONTRACTS: Contract[] = [
     startDate: '2026-05-01',
     shirtNumber: 1,
     notes: 'Multa rescisória de 10x sobre o valor do salário base.',
-    code: 'ETEC-2020',
+    code: 'BL-2020',
     status: 'SIGNED',
     signedAt: '2026-05-19T14:30:00Z',
     signatureDataUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40"><path d="M10,20 Q30,5 50,20 T90,20" fill="none" stroke="%23002B49" stroke-width="2"/></svg>'
@@ -143,13 +143,13 @@ export default function App() {
 
   // Add / Generate contract handler targeting database
   const handleAddContract = async (newContractData: Omit<Contract, 'id' | 'code' | 'status'>) => {
-    // Generate a unique code (E.g. ETEC-3819)
+    // Generate a unique code (E.g. BL-3819)
     let generatedCode = '';
     let isUnique = false;
     
     while (!isUnique) {
       const randNum = Math.floor(1000 + Math.random() * 9000); // 4 digitos
-      generatedCode = `ETEC-${randNum}`;
+      generatedCode = `BL-${randNum}`;
       isUnique = !contracts.some(c => c.code === generatedCode);
     }
 
@@ -219,24 +219,24 @@ export default function App() {
 
   if (!isReady) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center transition-colors">
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0c0507] flex items-center justify-center transition-colors">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Aguarde, carregando ETECANOS FC...</p>
+          <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-widest">Aguarde, carregando BILAU LOMBRADO FC...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 flex flex-col text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased font-sans">
+    <div className="min-h-screen bg-stone-50/50 dark:bg-[#0a0204] flex flex-col text-stone-800 dark:text-stone-100 transition-colors duration-200 antialiased font-sans">
       
-      {/* Visual top accent line representing primary colors: white + light blue gradient */}
-      <div className="h-1.5 bg-gradient-to-r from-sky-400 via-white to-sky-400 dark:from-sky-500 dark:via-slate-850 dark:to-sky-500 w-full" />
+      {/* Visual top accent line representing primary colors: Garnet Red + Gold gradient */}
+      <div className="h-1.5 bg-gradient-to-r from-red-800 via-amber-400 to-red-800 dark:from-red-900 dark:via-amber-500 dark:to-red-900 w-full" />
 
       {/* Graceful Connection Fallback Alert for Adblock / Private Mobile Browsing */}
       {connectionError && (
-        <div className="bg-amber-500 text-slate-950 px-4 py-2 text-center text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all animate-fade-in relative z-50 select-none">
+        <div className="bg-amber-500 text-stone-950 px-4 py-2 text-center text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all animate-fade-in relative z-50 select-none">
           <ShieldAlert className="w-4 h-4 shrink-0" />
           <span>
             <strong>Modo Demonstrativo Ativo:</strong> A conexão com o banco de dados foi limitada pelo seu dispositivo (ou bloqueada por adblock/modo privado). O site carregou um banco de dados local para você poder interagir!
@@ -245,7 +245,7 @@ export default function App() {
       )}
 
       {/* Main Layout Header banner */}
-      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 shadow-xs transition-colors duration-200">
+      <header className="bg-white dark:bg-[#140609] border-b border-stone-200 dark:border-red-950/60 sticky top-0 z-40 shadow-xs transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between py-3.5 sm:py-4 gap-4">
             
@@ -253,15 +253,15 @@ export default function App() {
             <div className="flex items-center gap-3.5 select-none hover:opacity-95 transition-opacity">
               <TeamLogo size="md" />
               <div className="text-center sm:text-left">
-                <span className="text-[10px] uppercase font-black text-sky-600 dark:text-sky-400 tracking-widest block font-mono">Clube de Futebol</span>
-                <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">ETECANOS FC</h1>
-                <p className="text-[11px] text-slate-400 dark:text-slate-300 font-medium">Assinatura Digital de Elenco Profissional</p>
+                <span className="text-[10px] uppercase font-black text-amber-600 dark:text-amber-400 tracking-widest block font-mono">Clube de Futebol</span>
+                <h1 className="text-xl md:text-2xl font-black text-stone-900 dark:text-white tracking-tight">BILAU LOMBRADO FC</h1>
+                <p className="text-[11px] text-stone-400 dark:text-stone-300 font-medium">Assinatura Digital • União Atletic Bilau & Barsemlombra</p>
               </div>
             </div>
 
             {/* Navigation Tabs Bar */}
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
-              <div className="flex-grow sm:flex-grow-0 flex flex-wrap items-center bg-slate-100 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 w-full sm:w-auto gap-1">
+              <div className="flex-grow sm:flex-grow-0 flex flex-wrap items-center bg-stone-100 dark:bg-[#070103] p-1.5 rounded-2xl border border-stone-200 dark:border-red-950/60 w-full sm:w-auto gap-1">
                 {/* Elenco tab (Home Page) */}
                 <button
                   id="view-tab-elenco"
@@ -272,8 +272,8 @@ export default function App() {
                   }}
                   className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4.5 py-2.5 text-xs md:text-sm font-black rounded-xl transition-all select-none cursor-pointer ${
                     activeTab === 'elenco'
-                      ? 'bg-sky-600 text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-900/40'
+                      ? 'bg-gradient-to-r from-red-800 to-red-900 text-amber-300 border border-amber-500/40 shadow-xs'
+                      : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/50 dark:hover:bg-red-950/40'
                   }`}
                 >
                   <Users className="w-4 h-4" />
@@ -281,7 +281,7 @@ export default function App() {
                 </button>
 
                 {/* Discreet Divider */}
-                <div className="hidden sm:block w-px h-5 bg-slate-300 dark:bg-slate-800 mx-1.5" />
+                <div className="hidden sm:block w-px h-5 bg-stone-300 dark:bg-red-950/60 mx-1.5" />
 
                 {/* Jogador tab (Secondary) */}
                 <button
@@ -293,8 +293,8 @@ export default function App() {
                   }}
                   className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl transition-all select-none cursor-pointer ${
                     activeTab === 'player'
-                      ? 'bg-slate-800 dark:bg-slate-800 text-white shadow-xs'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-amber-400 hover:bg-slate-200/40 dark:hover:bg-slate-900/40'
+                      ? 'bg-red-900 dark:bg-red-950 text-amber-300 border border-amber-500/30 shadow-xs'
+                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-amber-400 hover:bg-stone-200/40 dark:hover:bg-red-950/30'
                   }`}
                   title="Área reservada para o Atleta assinar o contrato"
                 >
@@ -312,8 +312,8 @@ export default function App() {
                   }}
                   className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl transition-all select-none cursor-pointer ${
                     activeTab === 'admin'
-                      ? 'bg-slate-800 dark:bg-slate-800 text-white shadow-xs'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-amber-400 hover:bg-slate-200/40 dark:hover:bg-slate-900/40'
+                      ? 'bg-red-900 dark:bg-red-950 text-amber-300 border border-amber-500/30 shadow-xs'
+                      : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-amber-400 hover:bg-stone-200/40 dark:hover:bg-red-950/30'
                   }`}
                   title="Painel de Controle e Contratos da Diretoria"
                 >
@@ -326,10 +326,10 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setDarkMode(!darkMode)}
-                className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white transition-all cursor-pointer shadow-xs flex items-center justify-center"
+                className="p-3 rounded-2xl bg-stone-100 dark:bg-[#140609] border border-stone-200 dark:border-red-950/60 hover:bg-stone-200 dark:hover:bg-red-950/40 text-stone-600 dark:text-stone-300 hover:text-stone-800 dark:hover:text-white transition-all cursor-pointer shadow-xs flex items-center justify-center"
                 title={darkMode ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
               >
-                {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-slate-700" />}
+                {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-stone-700" />}
               </button>
             </div>
 
@@ -365,16 +365,16 @@ export default function App() {
       </main>
 
       {/* Modern, non-cluttered humble footer credits */}
-      <footer className="mt-12 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-400 dark:text-slate-500 transition-colors">
+      <footer className="mt-12 bg-white dark:bg-[#140609] border-t border-stone-200 dark:border-red-950/60 py-6 text-center text-xs text-stone-400 dark:text-stone-500 transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 justify-center">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-200 dark:bg-sky-950 border border-sky-400 dark:border-sky-500 shrink-0" />
-            <span>© {new Date().getFullYear()} ETECANOS FC. Todos os direitos reservados.</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-red-800 border border-amber-400 shrink-0" />
+            <span>© {new Date().getFullYear()} BILAU LOMBRADO FC. Todos os direitos reservados.</span>
           </div>
           <div className="flex items-center gap-2.5 justify-center font-medium">
-            <span>Início da Temporada Esportiva • CFT-09</span>
+            <span>Início da Temporada Esportiva • União BL</span>
             <span>•</span>
-            <span className="text-sky-500 dark:text-sky-400 font-extrabold tracking-wider uppercase">ETECANOS ATÉ MORRER</span>
+            <span className="text-amber-500 dark:text-amber-400 font-extrabold tracking-wider uppercase">BILAU LOMBRADO ATÉ MORRER</span>
           </div>
         </div>
       </footer>

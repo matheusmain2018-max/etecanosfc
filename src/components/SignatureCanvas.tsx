@@ -213,7 +213,7 @@ export default function SignatureCanvas({ onSave, onClear, playerName = '', id =
                   title={color.name}
                   onClick={() => setPenColor(color.hex)}
                   className={`w-5 h-5 rounded-full border-2 transition-transform ${
-                    penColor === color.hex ? 'scale-110 border-sky-400' : 'border-transparent'
+                    penColor === color.hex ? 'scale-110 border-amber-500' : 'border-transparent'
                   }`}
                   style={{ backgroundColor: color.hex }}
                 />
@@ -232,7 +232,7 @@ export default function SignatureCanvas({ onSave, onClear, playerName = '', id =
                   onClick={() => setPenWidth(width)}
                   className={`px-2 py-0.5 text-xs rounded font-medium transition-all ${
                     penWidth === width 
-                      ? 'bg-sky-500 text-white' 
+                      ? 'bg-red-800 text-amber-300 font-extrabold' 
                       : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
                   }`}
                 >
@@ -249,7 +249,7 @@ export default function SignatureCanvas({ onSave, onClear, playerName = '', id =
               id="autofill-signature-btn"
               type="button"
               onClick={generateDigitalTextSignature}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-sky-700 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
               title="Gera uma assinatura baseada no nome do jogador"
             >
               <Type className="w-3.5 h-3.5" />

@@ -1,6 +1,6 @@
 {
-  "name": "ETECANOS FC - Contratos",
-  "description": "Sistema de assinatura eletrônica de contratos para os jogadores do ETECANOS FC com geração de PDFs.",
+  "name": "BILAU LOMBRADO FC - Contratos",
+  "description": "Sistema oficial de gestão e assinatura eletrônica de contratos do BILAU LOMBRADO FC.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

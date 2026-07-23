@@ -87,19 +87,21 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
 
   const sigY = 244; // Vertical coordinate for signatures
 
-  // Pre-fetch the ETECANOS FC logo as soon as possible
-  const logoUrl = 'https://i.imgur.com/gLgiJ2x.png';
-  const logoImg = await loadImage(logoUrl);
+  // Pre-fetch the BILAU LOMBRADO FC logo as soon as possible
+  const logoUrl = '/logo.png';
+  const logoImg = await loadImage(logoUrl).catch(() => loadImage('https://i.imgur.com/8HSE8i8.png'));
 
   // Color Palette Definitions
-  const PRIMARY_BLUE = [2, 132, 199]; // #0284c7 (Sky Blue)
-  const DARK_NAVY = [0, 43, 73];    // Rich contract navy
+  const PRIMARY_GOLD = [212, 175, 55]; // #d4af37 (Gold Accent)
+  const PRIMARY_BLUE = [212, 175, 55]; // Accent gold
+  const DARK_GARNET = [120, 15, 30];   // Rich Garnet/Burgundy Red
+  const DARK_NAVY = [11, 19, 41];      // Deep Navy Blue
   const OFF_WHITE = [248, 250, 252]; // Background highlight
   const TEXT_DARK = [15, 23, 42];    // Slate-900 list text
   const TEXT_MUTED = [100, 116, 139]; // Slate-500 description text
 
   // 1. Draw elegant border & background highlights
-  doc.setDrawColor(PRIMARY_BLUE[0], PRIMARY_BLUE[1], PRIMARY_BLUE[2]);
+  doc.setDrawColor(PRIMARY_GOLD[0], PRIMARY_GOLD[1], PRIMARY_GOLD[2]);
   doc.setLineWidth(1);
   doc.rect(8, 8, 194, 281); // External framing
 
@@ -108,22 +110,22 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
   doc.rect(10, 10, 190, 277);
 
   // 2. Club Logo and Header Decoration
-  // Draw light blue background banner in header
-  doc.setFillColor(DARK_NAVY[0], DARK_NAVY[1], DARK_NAVY[2]);
+  // Draw garnet red background banner in header
+  doc.setFillColor(DARK_GARNET[0], DARK_GARNET[1], DARK_GARNET[2]);
   doc.rect(10, 10, 190, 32, 'F');
 
   const drawFallbackLogo = () => {
     // SVG-esque drawings for team star/emblem on header if image fails to load
-    doc.setFillColor(PRIMARY_BLUE[0], PRIMARY_BLUE[1], PRIMARY_BLUE[2]);
+    doc.setFillColor(PRIMARY_GOLD[0], PRIMARY_GOLD[1], PRIMARY_GOLD[2]);
     doc.ellipse(28, 26, 11, 11, 'F');
     doc.setFillColor(255, 255, 255);
     doc.ellipse(28, 26, 9, 9, 'F');
     
-    // Draw letter 'E' inside ball placeholder
-    doc.setTextColor(DARK_NAVY[0], DARK_NAVY[1], DARK_NAVY[2]);
+    // Draw letter 'B' inside ball placeholder
+    doc.setTextColor(DARK_GARNET[0], DARK_GARNET[1], DARK_GARNET[2]);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('E', 28, 31, { align: 'center' });
+    doc.text('B', 28, 31, { align: 'center' });
   };
 
   if (logoImg) {
@@ -132,7 +134,7 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
       doc.setFillColor(255, 255, 255);
       doc.ellipse(28, 26, 11.5, 11.5, 'F');
       
-      // Add Etecanos FC official logo to header
+      // Add Bilau Lombrado FC official logo to header
       doc.addImage(logoImg, 'PNG', 17.5, 15.5, 21, 21);
     } catch (err) {
       console.error('Failed to draw header image: ', err);
@@ -145,14 +147,14 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
   // Header Typography
   doc.setTextColor(255, 255, 255);
   doc.setFont('Helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text('ETECANOS FUTEBOL CLUBE', 46, 23);
+  doc.setFontSize(17);
+  doc.text('BILAU LOMBRADO FUTEBOL CLUBE', 46, 23);
   
   doc.setFont('Helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(186, 230, 253); // light sky blue text
+  doc.setTextColor(253, 224, 71); // light gold text
   doc.text('Departamento de Futebol Profissional | CNPJ: 99.888.777/0001-01', 46, 29);
-  doc.text('São Paulo - SP | Registro CBF nº 481.99', 46, 33);
+  doc.text('São Paulo - SP | Registro CBF nº 481.99 | União BL', 46, 33);
 
   // 3. Middle Watermarked Transparent Logo - Moved below to empty signature area for text clarity
 
@@ -210,7 +212,7 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
   const clauses = [
     {
       title: 'CLÁUSULA PRIMEIRA - DO OBJETO E FUNÇÃO:',
-      text: `O atleta se compromete a prestar seus serviços desportivos profissionais de futebol ao ETECANOS FC, desempenhando suas funções em treinos, competições oficiais ou amistosas sob a orientação técnica do clube, atuando principalmente na posição de ${contract.position}.`
+      text: `O atleta se compromete a prestar seus serviços desportivos profissionais de futebol ao BILAU LOMBRADO FC, desempenhando suas funções em treinos, competições oficiais ou amistosas sob a orientação técnica do clube, atuando principalmente na posição de ${contract.position}.`
     },
     {
       title: 'CLÁUSULA SEGUNDA - DA VIGÊNCIA E EXCLUSIVIDADE:',
@@ -218,11 +220,11 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
     },
     {
       title: 'CLÁUSULA TERCEIRA - DA REMUNERAÇÃO:',
-      text: `Pelo fiel cumprimento dos serviços acertados, o ETECANOS FC pagará mensalmente ao atleta a quantia de ${formatCurrency(contract.salary)} (mensais). Fica acordado o recebimento de bonificação regular e cobertura de despesas médicas caso decorrentes de atividades esportivas a serviço da agremiação.`
+      text: `Pelo fiel cumprimento dos serviços acertados, o BILAU LOMBRADO FC pagará mensalmente ao atleta a quantia de ${formatCurrency(contract.salary)} (mensais). Fica acordado o recebimento de bonificação regular e cobertura de despesas médicas caso decorrentes de atividades esportivas a serviço da agremiação.`
     },
     {
       title: 'CLÁUSULA QUARTA - DO COMPROMISSO E DISCIPLINA:',
-      text: `O Atleta obriga-se a honrar as cores azul claro e branco do ETECANOS FC, comparecer pontualmente a todos os compromissos, manter boa conduta esportiva e prezar pelas diretrizes, integridade física, saúde fisiológica e o bom nome do clube dentro ou fora de campo.`
+      text: `O Atleta obriga-se a honrar as cores vinho, azul marinho e dourado do BILAU LOMBRADO FC, comparecer pontualmente a todos os compromissos, manter boa conduta esportiva e prezar pelas diretrizes, integridade física, saúde fisiológica e o bom nome do clube dentro ou fora de campo.`
     }
   ];
 
@@ -306,7 +308,7 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
   doc.setFont('Helvetica', 'italic');
   doc.setFontSize(7.5);
   doc.setTextColor(TEXT_MUTED[0], TEXT_MUTED[1], TEXT_MUTED[2]);
-  doc.text('Presidente do Club ETECANOS FC', 60, sigY + 9, { align: 'center' });
+  doc.text('Presidente do Club BILAU LOMBRADO FC', 60, sigY + 9, { align: 'center' });
   doc.text('Assinatura Eletrônica do Atleta', 150, sigY + 9, { align: 'center' });
 
   // 8. Place actual athlete's eletronic signature image
@@ -382,8 +384,8 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
     format: 'a4',
   });
 
-  const logoUrl = 'https://i.imgur.com/gLgiJ2x.png';
-  const logoImg = await loadImage(logoUrl);
+  const logoUrl = '/logo.png';
+  const logoImg = await loadImage(logoUrl).catch(() => loadImage('https://i.imgur.com/8HSE8i8.png'));
 
   const cardX = 25;
   const cardY = 40;
@@ -554,7 +556,7 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
     textY += 6;
   };
 
-  printCertLine('Razão Social: ', 'ETECANOS FUTEBOL CLUBE - Departamento de Registros');
+  printCertLine('Razão Social: ', 'BILAU LOMBRADO FUTEBOL CLUBE - Departamento de Registros');
   printCertLine('CNPJ Oficial: ', '99.888.777/0001-01');
   printCertLine('Nome Completo do Atleta: ', contract.playerName.toUpperCase());
   printCertLine('Inscrição no B.I.D.: ', bidNum);
@@ -568,7 +570,7 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
   doc.setFont('Helvetica', 'normal');
   doc.setFontSize(8.5);
   doc.setTextColor(71, 85, 105); // slate-600
-  const statementText = `Confirmamos para fins desportivos e de representação que o atleta supramencionado encontra-se devidamente registrado sob a Federação Paulista de Futebol (FPF) e no Boletim Informativo Diário (B.I.D.) da Confederação Brasileira de Futebol como integrante oficial do elenco Etecanos FC. A veracidade desta carteira desportiva digital pode ser atestada usando o código validador do contrato especial de trabalho.`;
+  const statementText = `Confirmamos para fins desportivos e de representação que o atleta supramencionado encontra-se devidamente registrado sob a Federação Paulista de Futebol (FPF) e no Boletim Informativo Diário (B.I.D.) da Confederação Brasileira de Futebol como integrante oficial do elenco Bilau Lombrado FC. A veracidade desta carteira desportiva digital pode ser atestada usando o código validador do contrato especial de trabalho.`;
   const splitStatement = doc.splitTextToSize(statementText, 166);
   doc.text(splitStatement, textX, textY);
   
