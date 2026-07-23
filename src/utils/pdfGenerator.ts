@@ -135,7 +135,11 @@ export async function generateContractPDF(contract: Contract): Promise<void> {
       doc.ellipse(28, 26, 11.5, 11.5, 'F');
       
       // Add Bilau Lombrado FC official logo to header
-      doc.addImage(logoImg, 'PNG', 17.5, 15.5, 21, 21);
+      try {
+        doc.addImage(logoImg, 'JPEG', 17.5, 15.5, 21, 21);
+      } catch {
+        doc.addImage(logoImg, 'PNG', 17.5, 15.5, 21, 21);
+      }
     } catch (err) {
       console.error('Failed to draw header image: ', err);
       drawFallbackLogo();
@@ -499,7 +503,11 @@ export async function generateBidCardPDF(contract: Contract): Promise<void> {
   const bottomLogoY = cardY + 74;
   if (logoImg) {
     try {
-      doc.addImage(logoImg, 'PNG', detailsX, bottomLogoY, 13, 13);
+      try {
+        doc.addImage(logoImg, 'JPEG', detailsX, bottomLogoY, 13, 13);
+      } catch {
+        doc.addImage(logoImg, 'PNG', detailsX, bottomLogoY, 13, 13);
+      }
     } catch (e) {
       console.error('Failed to draw bottom logo on BID card:', e);
     }

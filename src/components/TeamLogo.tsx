@@ -23,11 +23,7 @@ export default function TeamLogo({ className = '', size = 'md' }: TeamLogoProps)
         src="/logo.png"
         alt="BILAU LOMBRADO FC"
         referrerPolicy="no-referrer"
-        className="w-full h-full object-contain relative z-10 drop-shadow-md select-none"
-        onError={(e) => {
-          // Fallback if local path has any resolution issue
-          (e.currentTarget as HTMLImageElement).src = "https://i.imgur.com/8HSE8i8.png";
-        }}
+        className="w-full h-full object-cover rounded-2xl relative z-10 drop-shadow-md select-none border border-amber-500/30"
       />
     </div>
   );
